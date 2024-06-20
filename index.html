@@ -184,52 +184,62 @@
                                 </div>
                             </a>
                             <div class="short_info">
-                                <h4> Shaker Unisex Training Water Bottle 600 Ml</h4>
-                                <h5>Rs.299.00 </h5>
-                                <p style="background-color: #ff0000; padding: 10px;"><a href="Add to cart.html" class="add-to-cart">Add to cart</a></p>
+                                <h4>Shaker Unisex Training Water Bottle 600 Ml</h4>
+                                <h5>Rs.299.00</h5>
+                                <p style="background-color: #ff0000; padding: 10px;">
+                                    <a href="javascript:void(0)" class="add-to-cart" onclick="addToCart('Shaker Unisex Training Water Bottle 600 Ml', 'Rs.299.00', './img/bottile.jpg')">Add to cart</a>
+                                </p>
                             </div>
                         </div>
                     </div>
-
-
-
-
-                  
-                     <div class="col-lg-5 col-md-6">
+                    
+                    <div class="col-lg-5 col-md-6">
                         <div class="row">
-                           <div class="col-lg-12 col-sm-6 col-md-12 single_portfolio_project">
-                              <div class="portfolio_box">
-                                 <a href="img/bottile2.jpg" class="img-gal">
-                                    <div class="single_portfolio">
-                                       <img class="img-fluid w-100" src="img/bottile2.jpg" alt="">
+                            <div class="col-lg-12 col-sm-6 col-md-12 single_portfolio_project">
+                                <div class="portfolio_box">
+                                    <a href="img/bottile2.jpg" class="img-gal">
+                                        <div class="single_portfolio">
+                                            <img class="img-fluid w-100" src="img/bottile2.jpg" alt="">
+                                        </div>
+                                    </a>
+                                    <div class="short_info">
+                                        <h4>Lifelong Protein Shaker -100% Leakproof</h4>
+                                        <h5>Rs.250.00</h5>
+                                        <p style="background-color: #ff0000; padding: 10px;">
+                                            <a href="javascript:void(0)" class="add-to-cart" onclick="addToCart('Lifelong Protein Shaker -100% Leakproof', 'Rs.250.00', 'img/bottile2.jpg')">Add to cart</a>
+                                        </p>
                                     </div>
-                                 </a>
-                                 <div class="short_info">
-                                   
-                                   <h4>Lifelong Protein Shaker -100% Leakproof </h4>
-                                   <h5>Rs.250.00 </h5>
-                                    <p style="background-color: #ff0000; padding: 10px;"> <a href="Add to cart.html">Add to cart </a></p>
-
-                                 </div>
-                              </div>
-                           </div>
-                           <div class="col-lg-12 col-sm-6 col-md-12 single_portfolio_project">
-                              <div class="portfolio_box">
-                                 <a href="img/toy.jpg" class="img-gal">
-                                    <div class="single_portfolio">
-                                       <img class="img-fluid w-100" src="img/toy.jpg" alt="">
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-sm-6 col-md-12 single_portfolio_project">
+                                <div class="portfolio_box">
+                                    <a href="img/toy.jpg" class="img-gal">
+                                        <div class="single_portfolio">
+                                            <img class="img-fluid w-100" src="img/toy.jpg" alt="">
+                                        </div>
+                                    </a>
+                                    <div class="short_info">
+                                        <h4>Homeware Plastic Puzzle Pencil Box with Number Lock</h4>
+                                        <h5>Rs.199.00</h5>
+                                        <p style="background-color: #ff0000; padding: 10px;">
+                                            <a href="javascript:void(0)" class="add-to-cart" onclick="addToCart('Homeware Plastic Puzzle Pencil Box with Number Lock', 'Rs.199.00', 'img/toy.jpg')">Add to cart</a>
+                                        </p>
                                     </div>
-                                 </a>
-                                 <div class="short_info">
-                                  
-                                    <h4>Homeware Plastic Puzzle Pencil Box with Number Lock</h4>
-                                    <h5>Rs.199.00 </h5>
-                                    <p style="background-color: #ff0000; padding: 10px;"> <a href="Add to cart.html" >Add to cart </a></p>
-
-                                 </div>
-                              </div>
-                           </div>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                    
+                    <script>
+                    function addToCart(title, price, image) {
+                        const item = { title, price, image };
+                        let cart = JSON.parse(localStorage.getItem('cartItems')) || [];
+                        cart.push(item);
+                        localStorage.setItem('cartItems', JSON.stringify(cart));
+                        window.location.href = 'cart.html';
+                    }
+                    </script>
+                                            </div>
                      </div>
                   </div>
                   <div class="row align-items-center justify-content-between tab-pane fade" id="Interior" role="tabpanel"
