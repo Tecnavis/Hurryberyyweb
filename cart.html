@@ -41,6 +41,7 @@
             padding: 10px 20px;
             border: none;
             cursor: pointer;
+            float: right;
         }
         .remove-button {
             background-color: green;
@@ -48,6 +49,14 @@
             padding: 10px 20px;
             border: none;
             cursor: pointer;
+        }
+        .total-amount-container {
+            text-align: right;
+            margin: 20px 0;
+        }
+        .total-amount {
+            font-size: 18px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -58,19 +67,27 @@
     <div class="cart-container">
         <h1>Your Cart</h1>
         <div id="cartItems"></div>
-        <div id="checkoutContainer">
-            <button class="checkout-button" onclick="checkout()">Checkout</button>
+        <div class="total-amount-container">
+            <div id="totalAmount" class="total-amount"></div>
+            <div id="checkoutContainer">
+                <button class="checkout-button" onclick="checkout()">Checkout</button>
+            </div>
         </div>
     </div>
-    <footer style="margin-top: 310px;">
-        <p>&copy; 2024 hurryberry. All rights reserved.</p>
+    <footer style="margin-top: 300px;">
+        <p>&copy; 2024 Hurry Burry. All rights reserved.</p>
     </footer>
     <script>
         function loadCart() {
             const cart = JSON.parse(localStorage.getItem('cartItems')) || [];
+            let total = 0;
+
             if (cart.length > 0) {
                 let cartItemsHtml = '';
                 cart.forEach((item, index) => {
+                    const price = parseFloat(item.price.replace('Rs.', '').replace(',', ''));
+                    total += price;
+
                     cartItemsHtml += `
                         <div class="cart-item" id="cartItem${index}">
                             <img src="${item.image}" alt="${item.title}">
@@ -85,8 +102,10 @@
                     `;
                 });
                 document.getElementById('cartItems').innerHTML = cartItemsHtml;
+                document.getElementById('totalAmount').innerText = `Total: Rs.${total.toFixed(2)}`;
             } else {
                 document.getElementById('cartItems').innerHTML = '<p>Your cart is empty.</p>';
+                document.getElementById('totalAmount').innerText = '';
                 document.getElementById('checkoutContainer').style.display = 'none';
             }
         }
