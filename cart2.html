@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
     <head>
         <!-- Required meta tags -->
         <meta charset="utf-8">
@@ -85,7 +86,7 @@
         </header>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cart</title>
+    <title>Checkout Summary</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -97,25 +98,35 @@
             text-align: center;
             padding: 10px 0;
         }
-        .cart-container {
+        .summary-container {
             padding: 20px;
             max-width: 800px;
             margin: auto;
         }
-        .cart-item {
-            display: flex;
-            align-items: center;
+        .summary-section {
             margin-bottom: 20px;
         }
-        .cart-item img {
-            max-width: 150px;
-            margin-right: 20px;
+        .summary-section h2 {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
         }
-        .cart-item .details {
-            flex-grow: 1;
+        .summary-details {
+            margin-top: 10px;
         }
-        .cart-item .actions {
-            margin-left: 20px;
+        .address-box {
+            border: 1px solid #ddd;
+            padding: 20px;
+            position: relative;
+        }
+        .edit-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: blue;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
         }
         .checkout-button {
             background-color: red;
@@ -123,199 +134,113 @@
             padding: 10px 20px;
             border: none;
             cursor: pointer;
-            float: right;
-        }
-        .remove-button {
-            background-color: green;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
         }
         .total-amount-container {
-            text-align: right;
-            margin: 20px 0;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-top: 20px;
         }
         .total-amount {
             font-size: 18px;
-            margin-bottom: 10px;
+            margin-right: 20px;
         }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
+        .product-summary {
+            margin-top: 20px;
+        }
+        .product-item {
+            display: flex;
             align-items: center;
+            margin-bottom: 20px;
         }
-        .modal-content {
-            background-color: white;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 400px;
-            text-align: center;
+        .product-item img {
+            max-width: 100px;
+            margin-right: 20px;
         }
-        .modal-content input, .modal-content textarea {
-            width: 90%;
-            padding: 10px;
-            margin: 10px 0;
-        }
-        .close {
-            color: red;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
+        .product-item .details {
+            flex-grow: 1;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Shopping Cart</h1>
+        <h1>Checkout Summary</h1>
     </header>
-    <div class="cart-container">
-        <h1>Your Cart</h1>
-        <div id="cartItems"></div>
+    <div class="summary-container">
+        <div class="summary-section">
+            <h2>Verify Address</h2>
+            <div class="address-box">
+                <button class="edit-button" onclick="editAddress()">Edit Address</button>
+                <div id="addressDetails" class="summary-details"></div>
+            </div>
+        </div>
+        <div class="summary-section product-summary">
+            <h2>Product Summary</h2>
+            <div id="productDetails" class="summary-details"></div>
+        </div>
         <div class="total-amount-container">
             <div id="totalAmount" class="total-amount"></div>
-            <div id="checkoutContainer">
-                <button class="checkout-button" onclick="checkout()">Proceed</button>
-            </div>
+            <button class="checkout-button" onclick="checkout()">Checkout</button>
         </div>
     </div>
     <footer style="margin-top: 300px;">
         <p>&copy; 2024 Hurry Burry. All rights reserved.</p>
     </footer>
 
-    <!-- Modal -->
-    <div id="checkoutModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2>Checkout Details</h2>
-            <input type="text" id="firstName" placeholder="First Name">
-            <input type="text" id="lastName" placeholder="Last Name">
-            <input type="email" id="email" placeholder="Email">
-            <input type="text" id="phone" placeholder="Phone">
-            <textarea id="address" placeholder="Address"></textarea>
-            <input type="text" id="state" placeholder="State">
-            <input type="text" id="country" placeholder="Country">
-            <input type="text" id="pinCode" placeholder="Pin Code">
-            <button class="checkout-button" onclick="continueCheckout()">Continue</button>
-        </div>
-    </div>
-
     <script>
-        function loadCart() {
-            const cart = JSON.parse(localStorage.getItem('cartItems')) || [];
+        function loadSummary() {
+            const checkoutDetails = JSON.parse(localStorage.getItem('checkoutDetails')) || {};
+            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
             let total = 0;
 
-            if (cart.length > 0) {
-                let cartItemsHtml = '';
-                cart.forEach((item, index) => {
+            // Load Address Details
+            const addressHtml = `
+                <p>First Name: ${checkoutDetails.firstName}</p>
+                <p>Last Name: ${checkoutDetails.lastName}</p>
+                <p>Email: ${checkoutDetails.email}</p>
+                <p>Phone: ${checkoutDetails.phone}</p>
+                <p>Address: ${checkoutDetails.address}</p>
+                <p>State: ${checkoutDetails.state}</p>
+                <p>Country: ${checkoutDetails.country}</p>
+                <p>Pin Code: ${checkoutDetails.pinCode}</p>
+            `;
+            document.getElementById('addressDetails').innerHTML = addressHtml;
+
+            // Load Product Summary
+            if (cartItems.length > 0) {
+                let productDetailsHtml = '';
+                cartItems.forEach((item, index) => {
                     const price = parseFloat(item.price.replace('Rs.', '').replace(',', ''));
                     total += price;
 
-                    cartItemsHtml += `
-                        <div class="cart-item" id="cartItem${index}">
+                    productDetailsHtml += `
+                        <div class="product-item" id="productItem${index}">
                             <img src="${item.image}" alt="${item.title}">
                             <div class="details">
                                 <h4>${item.title}</h4>
                                 <h5>${item.price}</h5>
                             </div>
-                            <div class="actions">
-                                <button class="remove-button" onclick="removeFromCart(${index})">Remove</button>
-                            </div>
                         </div>
                     `;
                 });
-                document.getElementById('cartItems').innerHTML = cartItemsHtml;
+                document.getElementById('productDetails').innerHTML = productDetailsHtml;
                 document.getElementById('totalAmount').innerText = `Total: Rs.${total.toFixed(2)}`;
             } else {
-                document.getElementById('cartItems').innerHTML = '<p>Your cart is empty.</p>';
+                document.getElementById('productDetails').innerHTML = '<p>No products in cart.</p>';
                 document.getElementById('totalAmount').innerText = '';
-                document.getElementById('checkoutContainer').style.display = 'none';
             }
         }
 
-        function removeFromCart(index) {
-            let cart = JSON.parse(localStorage.getItem('cartItems')) || [];
-            cart.splice(index, 1);
-            localStorage.setItem('cartItems', JSON.stringify(cart));
-            loadCart();
+        function editAddress() {
+            window.location.href = 'cart.html';
         }
 
         function checkout() {
-            document.getElementById('checkoutModal').style.display = 'flex';
+            alert('Proceeding to final checkout...');
+            // Implement final checkout logic here
         }
 
-        function closeModal() {
-            document.getElementById('checkoutModal').style.display = 'none';
-        }
-
-        function continueCheckout() {
-            const firstName = document.getElementById('firstName').value;
-            const lastName = document.getElementById('lastName').value;
-            const email = document.getElementById('email').value;
-            const phone = document.getElementById('phone').value;
-            const address = document.getElementById('address').value;
-            const state = document.getElementById('state').value;
-            const country = document.getElementById('country').value;
-            const pinCode = document.getElementById('pinCode').value;
-
-            if (firstName && lastName && email && phone && address && state && country && pinCode) {
-                localStorage.setItem('checkoutDetails', JSON.stringify({ firstName, lastName, email, phone, address, state, country, pinCode }));
-                window.location.href = 'cart2.html';
-            } else {
-                alert('Please fill in all the details.');
-            }
-        }
-
-        window.onload = loadCart;
-
-        function continueCheckout() {
-    const firstName = document.getElementById('firstName').value;
-    const lastName = document.getElementById('lastName').value;
-    const email = document.getElementById('email').value;
-    const phone = document.getElementById('phone').value;
-    const address = document.getElementById('address').value;
-    const state = document.getElementById('state').value;
-    const country = document.getElementById('country').value;
-    const pinCode = document.getElementById('pinCode').value;
-
-    if (firstName && lastName && email && phone && address && state && country && pinCode) {
-        localStorage.setItem('checkoutDetails', JSON.stringify({ firstName, lastName, email, phone, address, state, country, pinCode }));
-        window.location.href = 'cart2.html';
-    } else {
-        alert('Please fill in all the details.');
-    }
-}
-
-
-function continueCheckout() {
-    const firstName = document.getElementById('firstName').value;
-    const lastName = document.getElementById('lastName').value;
-    const email = document.getElementById('email').value;
-    const phone = document.getElementById('phone').value;
-    const address = document.getElementById('address').value;
-    const state = document.getElementById('state').value;
-    const country = document.getElementById('country').value;
-    const pinCode = document.getElementById('pinCode').value;
-
-    if (firstName && lastName && email && phone && address && state && country && pinCode) {
-        localStorage.setItem('checkoutDetails', JSON.stringify({ firstName, lastName, email, phone, address, state, country, pinCode }));
-        window.location.href = 'cart2.html';
-    } else {
-        alert('Please fill in all the details.');
-    }
-}
-
+        window.onload = loadSummary;
     </script>
-
-    
 </body>
 </html>
